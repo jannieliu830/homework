@@ -176,8 +176,7 @@ function JSONTable(nameT,dateT,albumNameT,index)
 					
 					if (edit != -1)
 					{
-						console.log("good");
-						datapool.splice(edit,1,data);
+						delete(edit);
 					}
 				}
 					
@@ -215,9 +214,9 @@ function JSONTable(nameT,dateT,albumNameT,index)
     }
 
   function Delete(index){
-		document.getElementById("dataList").deleteRow(index);
+		document.getElementById("dataList").deleteRow(index-1);
 		datapool.splice(index,1);
-		var line = document.getElementById("dataList");
+		//var line = document.getElementById("dataList");
 		var xmlhttp = new XMLHttpRequest();
 		console.log(index);
         var url = "/articles/"+ index + ".json"
@@ -258,9 +257,9 @@ function JSONTable(nameT,dateT,albumNameT,index)
 
 function Edit(index){
 
- // var row = datapool[index];
- // edit = index;
- // console.log(index);
+  var row = datapool[index];
+  edit = index;
+ console.log(index);
 
 		var xmlhttp = new XMLHttpRequest();
         var url = "/articles.json"
@@ -276,14 +275,16 @@ function Edit(index){
 					console.log("status =  " + xmlhttp.status + " text = "  + allText)
 					datapool = JSON.parse(allText);
 					 console.log(JSON.stringify(datapool));
-					for(var i = 0; i < datapool.length; i++)
-					{
-						edit = index;
-						document.getElementById("songName").value = datapool[i].name;
-						console.log(datapool[i].date);
-						document.getElementById("pDate").value = datapool[i].dateR;
-						document.getElementById("album").value = datapool[i].album;
-					}
+					//for(var i = 0; i < datapool.length; i++)
+					//{
+					//	if(index == datapool[i].id){
+					//	edit = index;
+						document.getElementById("songName").value = row.name;
+						//console.log(datapool[i].date);
+						document.getElementById("pDate").value = row.date;
+						document.getElementById("album").value = row.album;
+					//	}
+					//}
 				}
 				else
 				{
