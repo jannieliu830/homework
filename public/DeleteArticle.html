@@ -1,0 +1,35 @@
+ <head>
+    
+    </head>
+    <body>
+       
+  <div id="select" style="float:left; margin-right:17px; border:1px solid green"></div>
+ 
+        <script>
+        var xmlhttp = new XMLHttpRequest();
+        var url = "/articles/"+ index + ".json"
+        xmlhttp.open("DELETE", url, true);
+		xmlhttp.setRequestHeader("Content-Type", "application/json");
+		xmlhttp.onreadystatechange = function ()
+		{
+			if(xmlhttp.readyState === 4)
+			{
+				if(xmlhttp.status === 204)
+				{
+					var allText = xmlhttp.responseText;
+					console.log("status =  " + xmlhttp.status + " text = "  + allText)
+				}
+				else
+				{
+					var allText = xmlhttp.responseText;
+					console.log("status =  " + xmlhttp.status + " text = "  + allText)
+				}
+			}
+
+		}
+        xmlhttp.send(JSON.stringify({name:"someonelikeyou", pdate:"2014-03-10", album:"25"}))
+
+		
+        </script>
+    </body>
+</html>

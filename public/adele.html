@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html>
+<head><style type="text/css">.lw { font-size: 60px; }
+
+H1{text-align: center; color: #2F4F4F; font-style: italic;}
+
+          .indent-label {
+            margin-left :3px;
+            display: inline;
+            width: 50px;
+            font-weight: bold;
+            color: grey;
+            text-shadow: 0.5px 0.2px green;
+          }
+          .indent-field {
+            margin-left : 10px;
+            display: inline;
+          }
+          .floating-box {
+          }
+          body {
+            background-color : #ffcc80;
+          }
+table{
+  text-align: center;
+  border-collapse: collapse;
+  
+
+}
+
+th,td{
+  border: 2px solid #997c90;
+  padding: 5px 10px;
+}
+</style><style type="text/css">.lw { font-size: 60px; }</style>
+  <title> Adele's song list </title>
+</head><body><h1> Adele's Song List </h1>
+ 
+
+  <div class="indent-label">
+	Name of Song:
+  </div>
+  <div class="indent-field">
+	<input size="30" id="songName" type="text">
+  </div>
+  <br> <br>
+  
+  <div class="indent-label">
+	Publish Date: 
+  </div>
+  <div class="indent-field">
+  	<input id="pDate" type="date">
+  </div>
+  <br> <br>
+  
+  <div class="indent-label">
+	Album: 
+  </div>
+  
+  <select id="album">
+    <option value="19"> 19</option>
+    <option value="21"> 21</option>
+    <option value="25"> 25</option>
+  </select><br>
+  <br> 
+ 
+  <input name="Add" value="Add" id="Add" onclick="Add()" type="button">
+  <input type="radio" id="albumR" name="switch" value="album" onclick="Content()" checked=""> Album 
+  <input type="radio" id="dateR" name="switch" value="date" onclick="Content()"> Publish Date 
+
+  <br><br><br>
+  <table id="table"> 
+    <tbody><tr>
+      <th>Name</th>
+      <th style="display: none;">Date</th>
+      <th>Album</th>
+      <th> </th>
+      <th> </th>
+    </tr>
+    </tbody><tbody id="dataList">
+    <tr><td>sdfs</td><td style="display: none;">2017-03-10</td><td>19</td><td><button onclick="Edit(1)"> Edit </button></td><td><button onclick="Delete(1)"> Delete </button></td></tr></tbody>
+  </table>
+  <script>window.onload = function(){
+ Initiate();
+  Start();
+  Content();  
+};
+
+
+  function Initiate(){
+    document.getElementById("songName").value = "";  
+    document.getElementById("pDate").value = "";
+    document.getElementById("album").value = "";
+    Content();
+  }
+
+var datapool = [];
+var edit = -1;
+
+function Start(){
+
+		
+        var xmlhttp = new XMLHttpRequest();
+        var url = "/articles.json"
+        xmlhttp.open("GET", url, true);
+		xmlhttp.setRequestHeader("Content-Type", "application/json");
+		xmlhttp.onreadystatechange = function ()
+		{
+			if(xmlhttp.readyState === 4)
+			{
+				if(xmlhttp.status === 200)
+				{
+					var allText = xmlhttp.responseText;
+					console.log("status =  " + xmlhttp.status + " text = "  + allText)
+					datapool = JSON.parse(allText);
+					for(var i = 0; i<datapool.length; i++){
+						JSONTable(datapool[i].name, datapool[i].date, datapool[i].album, i);
+					}
+				}
+				else
+				{
+					var allText = xmlhttp.responseText;
+					console.log("status =  " + xmlhttp.status + " text = "  + allText)
+				}
+			}
+
+		}
+		
+		xmlhttp.send(JSON.stringify());
+		
+        /*if(localStorage.data){
+          datapool = JSON.parse(localStorage.data);
+        for(var i = 0; i<datapool.length; i++){
+          JSONTable(datapool[i].name, datapool[i].date, datapool[i].album, i);
+        }
+ }
+      */
+  
+ }
+
+function JSONTable(nameT,dateT,albumNameT,index)
+{
+  var table = document.getElementById("dataList");
+  var row = table.insertRow();
+  var name = row.insertCell(0);
+  var date= row.insertCell(1);
+  var albumName= row.insertCell(2);
+  var editC = row.insertCell(3);
+  var deleteC = row.insertCell(4); 
+  name.innerHTML = nameT;
+  date.innerHTML = dateT;
+  albumName.innerHTML = albumNameT;
+  editC.innerHTML= '<button onclick="Edit('+index+')"> Edit </button>';
+  deleteC.innerHTML = '<button onclick = "Delete('+index+')"> Delete </button>';
+}
+   
+  function Add(){
+		Content();
+		var data = {name: document.getElementById("songName").value, 
+                date: document.getElementById("pDate").value, 
+                album: document.getElementById("album").value
+               };
+		var xmlhttp = new XMLHttpRequest();
+        var url = "/articles.json"
+        xmlhttp.open("POST", url, true);
+		xmlhttp.setRequestHeader("Content-Type", "application/json");
+		xmlhttp.onreadystatechange = function ()
+		{
+			if(xmlhttp.readyState === 4)
+			{
+				if(xmlhttp.status === 201)
+				{
+					var allText = xmlhttp.responseText;
+					console.log(data);
+					console.log("status =  " + xmlhttp.status + " text = "  + allText)
+					
+					if (edit != -1)
+					{
+						console.log("good");
+						datapool.splice(edit,1,data);
+					}
+				}
+					
+				else
+				{
+					datapool.push(data);
+					var allText = xmlhttp.responseText;
+					console.log("status =  " + xmlhttp.status + " text = "  + allText)
+				}
+				
+				
+			}
+
+		}
+		xmlhttp.send(JSON.stringify(data));
+		JSONTable(data.name, data.date, data.album, datapool.length);
+		Initiate(); 
+  /*  var data = {name: document.getElementById("songName").value, 
+                date: document.getElementById("pDate").value, 
+                album: document.getElementById("album").value
+               };
+   if(edit == -1){
+    datapool.push(data);
+    }
+    else{
+      edit =-1;
+      datapool.splice(edit,1,data);
+    } 
+    localStorage.data = JSON.stringify(datapool); 
+    JSONTable(data.name, data.date, data.album, datapool.length); 
+	
+   Initiate();  
+
+*/   
+    }
+
+  function Delete(index){
+		document.getElementById("dataList").deleteRow(index);
+		//datapool.splice(index,1);
+		var line = document.getElementById("dataList");
+		var xmlhttp = new XMLHttpRequest();
+        var url = "/articles/"+ index + ".json"
+		//console.log(index);
+		//console.log(url);
+        xmlhttp.open("DELETE", url, true);
+		xmlhttp.setRequestHeader("Content-Type", "application/json");
+		xmlhttp.onreadystatechange = function ()
+		{
+			if(xmlhttp.readyState === 4)
+			{
+				if(xmlhttp.status === 204)
+				{
+					var allText = xmlhttp.responseText;
+					console.log("status =  " + xmlhttp.status + " text = "  + allText)
+					Initiate();
+				}
+				else
+				{
+					var allText = xmlhttp.responseText;
+					console.log("status =  " + xmlhttp.status + " text = "  + allText)
+				}
+			}
+
+		}
+        xmlhttp.send(JSON.stringify(datapool));
+  /*
+    document.getElementById("dataList").deleteRow(index);
+    
+    datapool.splice(index, 1);
+    localStorage.setItem("datapool", JSON.stringify(datapool));
+
+   */
+  }
+
+
+function Edit(index){
+
+ // var row = datapool[index];
+ // edit = index;
+ // console.log(index);
+
+		var xmlhttp = new XMLHttpRequest();
+        var url = "/articles.json"
+        xmlhttp.open("GET", url, true);
+		xmlhttp.setRequestHeader("Content-Type", "application/json");
+		xmlhttp.onreadystatechange = function ()
+		{
+			if(xmlhttp.readyState === 4)
+			{
+				if(xmlhttp.status === 200)
+				{
+					var allText = xmlhttp.responseText;
+					console.log("status =  " + xmlhttp.status + " text = "  + allText)
+					datapool = JSON.parse(allText);
+					 console.log(JSON.stringify(datapool));
+					for(var i = 0; i < datapool.length; i++)
+					{
+						edit = index;
+						document.getElementById("songName").value = datapool[i].name;
+						console.log(datapool[i].date);
+						document.getElementById("pDate").value = datapool[i].strftime("%Y-%m-%d");
+						document.getElementById("album").value = datapool[i].album
+					}
+				}
+				else
+				{
+					var allText = xmlhttp.responseText;
+					console.log("status =  " + xmlhttp.status + " text = "  + allText)
+				}
+			}
+
+		}
+		xmlhttp.send(JSON.stringify());
+		
+ // document.getElementById("songName").value = row.name;
+ // document.getElementById("pDate").value = row.date;
+ // document.getElementById("album").value = row.album;
+  
+}
+
+function Content(){
+  var table = document.getElementById("table");
+  if(document.getElementById("albumR").checked === true)
+   { 
+    for(var i = 0; i< table.rows.length; i++)
+      {
+        table.rows[i].cells[0].style.display = "";
+        table.rows[i].cells[1].style.display = "none";
+        table.rows[i].cells[2].style.display = "";
+        table.rows[i].cells[3].style.display = "";
+        table.rows[i].cells[4].style.display = "";
+
+      }
+   }
+  else
+    {
+       for(var j = 0; j< table.rows.length; j++)
+      {
+        table.rows[j].cells[0].style.display = "";
+        table.rows[j].cells[1].style.display = "";
+        table.rows[j].cells[2].style.display = "none";
+        table.rows[j].cells[3].style.display = "";
+        table.rows[j].cells[4].style.display = "";
+      }      
+    }
+}
+
+</script></body>
