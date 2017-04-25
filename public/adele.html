@@ -216,10 +216,12 @@ function JSONTable(nameT,dateT,albumNameT,index)
 
   function Delete(index){
 		document.getElementById("dataList").deleteRow(index);
-		//datapool.splice(index,1);
+		datapool.splice(index,1);
 		var line = document.getElementById("dataList");
 		var xmlhttp = new XMLHttpRequest();
+		console.log(index);
         var url = "/articles/"+ index + ".json"
+		console.log(url);
 		//console.log(index);
 		//console.log(url);
         xmlhttp.open("DELETE", url, true);
@@ -232,7 +234,7 @@ function JSONTable(nameT,dateT,albumNameT,index)
 				{
 					var allText = xmlhttp.responseText;
 					console.log("status =  " + xmlhttp.status + " text = "  + allText)
-					Initiate();
+					
 				}
 				else
 				{
@@ -243,6 +245,7 @@ function JSONTable(nameT,dateT,albumNameT,index)
 
 		}
         xmlhttp.send(JSON.stringify(datapool));
+		//Initiate();
   /*
     document.getElementById("dataList").deleteRow(index);
     
@@ -278,7 +281,7 @@ function Edit(index){
 						edit = index;
 						document.getElementById("songName").value = datapool[i].name;
 						console.log(datapool[i].date);
-						document.getElementById("pDate").value = datapool[i].strftime("%Y-%m-%d");
+						document.getElementById("pDate").value = datapool[i].dateR;
 						document.getElementById("album").value = datapool[i].album;
 					}
 				}
