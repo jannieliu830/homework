@@ -9,7 +9,7 @@ end
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 5.0.2'
 # Use sqlite3 as the database for Active Record
-gem 'sqlite3'
+#gem 'sqlite3'
 # Use Puma as the app server
 gem 'puma', '~> 3.0'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
@@ -31,6 +31,18 @@ group :development, :test do
 end
 
 group :development do
+end
+
+
+group :development do
+      gem 'sqlite3'
+end
+ 
+group :production do
+  gem 'pg' # dont want sqlite in production
+  gem 'unicorn' # make sure you follow installation instructions for this gem
+  gem 'rails_log_stdout',           github: 'heroku/rails_log_stdout'
+  gem 'rails3_serve_static_assets', github: 'heroku/rails3_serve_static_assets'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
